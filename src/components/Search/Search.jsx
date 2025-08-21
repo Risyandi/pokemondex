@@ -1,0 +1,57 @@
+import "./style.scss";
+import searchIcon from "../../assets/icons/search-icon.svg";
+
+const Search = ({
+  inputValue,
+  setInputValue,
+  resultData,
+  setResultData,
+  setSearching,
+}) => {
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+    if (e.target.value === "") {
+      setSearching(false);
+    }
+  };
+
+  
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      fetch(`https://pokeapi.co/api/v2/pokemon/${inputValue.toLowerCase()}`)
+        .then((res) => {
+          if (res.status === 404) {
+            setResultData([]);
+            console.log("error");
+            return;
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setResultData(data);
+          setSearching(true);
+        })
+        .catch((err) => console.log(err.message));
+    }
+  };
+
+  return (
+    <div className="search-wrapper flex">
+      <div className="search-box flex">
+        <div className="search-icon flex">
+          <img src={searchIcon} alt="" />
+        </div>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="search pokemon..."
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Search;
